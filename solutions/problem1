@@ -1,0 +1,58 @@
+import math
+import os
+
+def solve():
+    # 1. Get the path to the 'inputs' folder automatically
+    # This finds the folder where THIS script is, then goes up one level to find 'inputs'
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.dirname(script_dir) # Go up one level from 'solutions'
+    
+    grid_path = os.path.join(base_dir, 'inputs', 'grid.txt')
+    directions_path = os.path.join(base_dir, 'inputs', 'directions.txt')
+
+    # 2. Read the Grid
+    with open(grid_path, 'r') as f:
+        # Read lines and remove whitespace/newlines
+        grid = [line.strip() for line in f if line.strip()]
+
+    # 3. Read the Directions
+    with open(directions_path, 'r') as f:
+        # Read the file, strip whitespace, and split by spaces
+        content = f.read().strip()
+        directions = content.split()
+
+    # 4. Rotate the Rows
+    rotated_grid = []
+    for i in range(len(grid)):
+        row = grid[i]
+        # Safety check: ensure we have a direction for this row
+        if i < len(directions):
+            direction = directions[i]
+            
+            if direction == 'R':
+                # Rotate Right: Last char becomes first (ABCDE -> EABCD)
+                new_row = row[-1] + row[:-1]
+            elif direction == 'L':
+                # Rotate Left: First char becomes last (ABCDE -> BCDEA)
+                new_row = row[1:] + row[0]
+            else:
+                new_row = row 
+                
+            rotated_grid.append(new_row)
+        else:
+            rotated_grid.append(row)
+
+    # 5. Find the Middle Row
+    mid_index = math.floor(len(rotated_grid) / 2)
+    middle_row = rotated_grid[mid_index]
+    
+    # 6. Calculate ASCII Sum (Clue 1)
+    clue_1 = sum(ord(char) for char in middle_row)
+
+    print(f"Middle Row: {middle_row}")
+    print(f"Clue 1: {clue_1}")
+
+    return clue_1
+
+if __name__ == "__main__":
+    solve()

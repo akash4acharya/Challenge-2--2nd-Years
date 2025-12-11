@@ -1,0 +1,64 @@
+import os
+import math
+
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(math.sqrt(n)) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+def solve():
+    # 1. Find and Read the file
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.dirname(script_dir)
+    
+    # Try multiple paths to be safe
+    possible_paths = [
+        os.path.join(script_dir, 'states.txt'),         
+        os.path.join(base_dir, 'inputs', 'states.txt'),
+        'inputs/states.txt'
+    ]
+    
+    text = ""
+    for path in possible_paths:
+        if os.path.exists(path):
+            with open(path, 'r') as f:
+                text = f.read()
+            break
+            
+    if not text:
+        print("ERROR: Could not find states.txt")
+        return
+
+    # 2. Parse numbers (handle newlines and spaces)
+    numbers = [int(x) for x in text.split() if x.strip().isdigit()]
+    
+    print(f"Loaded {len(numbers)} numbers.")
+
+    # 3. Simulate the Machine
+    # Goal: Count how many reach "DONE" (State 3)
+    # Rules:
+    # - Primes: Direct transition (Shortcut -> DONE) -> FINISH
+    # - Evens: Advance by 1 (0->1->2->3) -> FINISH
+    # - Odd Composites: Do not advance -> FAIL
+    
+    finished_count = 0
+    
+    for num in numbers:
+        if is_prime(num):
+            # Prime Rule: Direct transition to end
+            finished_count += 1
+        elif num % 2 == 0:
+            # Even Rule: Advances 1 by 1, eventually finishes
+            finished_count += 1
+        else:
+            # Odd Composite Rule: Does not advance
+            pass
+
+    print(f"Clue 3: {finished_count}")
+    return finished_count
+
+if __name__ == "__main__":
+    solve()
